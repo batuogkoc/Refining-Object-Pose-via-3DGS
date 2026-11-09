@@ -41,7 +41,7 @@ if __name__ == "__main__":
         os.makedirs(output_path)
         # train the 3DGS model
         cmd = f'python -m src.module.3DGS.trainer default  --data_dir {train_data} \
-        --data_factor 1 --result_dir {output_path} --init_type bbox --feature_rendering --disable_viewer  --strategy.prune-opa 0.1  --batch_size 4 --steps_scaler 0.25'
+        --data_factor 1 --result_dir {output_path} --init_type bbox --feature_rendering --disable_viewer  --strategy.prune-opa 0.1  --batch_size 4 --steps_scaler 1'
         # subprocess.run(cmd, shell=True)
         commands.append(cmd)
 

@@ -1,0 +1,33 @@
+
+'micromamba' is running as a subprocess and can't modify the parent shell.
+Thus you must initialize your shell before using activate and deactivate.
+
+To initialize the current bash shell, run:
+    $ eval "$(micromamba shell hook --shell bash)"
+and then activate or deactivate with:
+    $ micromamba activate
+To automatically initialize all future (bash) shells, run:
+    $ micromamba shell init --shell bash --root-prefix=~/.local/share/mamba
+If your shell was already initialized, reinitialize your shell with:
+    $ micromamba shell reinit --shell bash
+Otherwise, this may be an issue. In the meantime you can run commands. See:
+    $ micromamba run --help
+
+Supported shells are {bash, zsh, csh, posix, xonsh, cmd.exe, powershell, fish, nu}.
+Running validation for train set: yp_model_6_1_cropped and test set: yp_model_6_1_cropped
+Train set: yp_model_6_1_cropped test set: yp_model_6_1_cropped output: joint-yp_model_6_1_cropped-yp_model_6_1_cropped
+Using 1 GPU(s) for training.
+masks already exists, skipping segmentation
+Training GS model for yp_model_6_1_cropped
+Skip model-ship: existing GS checkpoint found in output/gs_models/yp_model_6_1_cropped/model-ship/ckpts
+Progress: 0it [00:00, ?it/s]Progress: 0it [00:00, ?it/s]
+Traceback (most recent call last):
+  File "/fs/nexus-scratch/bgunduz/matrix/LoFTR/.mmamba/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/fs/nexus-scratch/bgunduz/matrix/LoFTR/.mmamba/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/fs/nexus-scratch/bgunduz/matrix/algorithms/Refining-Object-Pose-via-3DGS/tools/gen_real_matches.py", line 2, in <module>
+    import torch
+  File "/fs/nexus-scratch/bgunduz/matrix/LoFTR/.mmamba/lib/python3.8/site-packages/torch/__init__.py", line 218, in <module>
+    from torch._C import *  # noqa: F403
+ImportError: /fs/nexus-scratch/bgunduz/matrix/LoFTR/.mmamba/lib/python3.8/site-packages/torch/lib/libtorch_cpu.so: undefined symbol: iJIT_NotifyEvent

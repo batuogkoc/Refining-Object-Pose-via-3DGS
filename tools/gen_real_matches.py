@@ -30,8 +30,7 @@ def read_gs_ckpt(ckpt_path, threshold=0.5, max_num_gaussians = 20000):
         opa_valid = opacities[culls]
         opa_valid_sorted, _ = torch.sort(opa_valid, descending=True)
         threshold = opa_valid_sorted[max_num_gaussians]
-        culls = (opacities > threshold).squeeze()
-    
+        culls = (opacities >= threshold).squeeze()
     # Get means and descriptors
     descriptors = np.array(splats['gs_features'][culls])
     means = np.array(splats['means'][culls])

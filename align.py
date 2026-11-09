@@ -21,7 +21,10 @@ from gsplat.rendering import rasterization
 from src.module.refine.Refining_Model import Refining_Model
 from src.module.refine.loss import RefineLoss
 from src.data.refine.OnePose import OnePoseRefineDataset
+from time import perf_counter
 
+def three_by_four_to_htm(pose_3x4):
+    return torch.concatenate([torch.tensor(pose_3x4), torch.tensor([[0,0,0,1]])], dim=0)
 
 def _load_gs_splats(ckpt_path, device):
     """Load GS splats from checkpoint and move to device."""
@@ -629,6 +632,7 @@ def test_joint_model(config):
             k: v.to(device) if isinstance(v, torch.Tensor) else v
             for k, v in data.items()
         }
+        perf_counter_start = perf_counter()
 
         # ---- Stage 1: Match → 2D-3D correspondences ----
         t0 = time.time()
@@ -660,6 +664,13 @@ def test_joint_model(config):
         )
 
         gt_3x4 = query_pose_gt[0][:3]
+
+        print(f"Coarse inference time: {perf_counter()-perf_counter_start}")
+        print("pose_gt")
+        print(three_by_four_to_htm(gt_3x4))
+        print("pose_pred_coarse")
+        print(three_by_four_to_htm(pose_pred_3x4))
+
         if pose_pred_3x4 is None or not state:
             R_errs_match.append(np.inf)
             t_errs_match.append(np.inf)
@@ -715,6 +726,7 @@ def test_joint_model(config):
                 inliers=inliers,
             )
 
+        perf_counter_start = perf_counter()
         # ---- Prepare refine input ----
         R_init = torch.from_numpy(pose_pred_homo[:3, :3].astype(np.float32)).to(device)
         t_init = torch.from_numpy(pose_pred_homo[:3, 3].astype(np.float32)).to(device)
@@ -748,13 +760,26 @@ def test_joint_model(config):
         t_ref = refine_data["t_refined"][0].cpu().numpy()
         pose_ref_3x4 = np.concatenate([R_ref, t_ref[:, None]], axis=-1)
 
+        print(f"Fine inference time: {perf_counter()-perf_counter_start}")
         R_err_r, t_err_r = query_pose_error(
             pose_ref_3x4, gt_3x4, unit=eval_cfg.get("model_unit", "m"),
         )
+        print("pose_pred_fine")
+        print(pose_ref_3x4)
         R_errs_refine.append(R_err_r)
         t_errs_refine.append(t_err_r)
 
     # ---- Report ----
+    # print("R errors match")
+    # print(R_errs_match)
+    # print("t errors match")
+    # print(t_errs_match)
+
+    # print("R errors refine")
+    # print(R_errs_refine)
+    # print("t errors refine")
+    # print(t_errs_refine)
+
     def _stats(vals, name):
         a = np.array([v for v in vals if v < 1e6])
         if len(a) == 0:
